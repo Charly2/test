@@ -41,6 +41,7 @@ a {
         color: #2A3F54;
         text-align: center;
         font-size: 2.2em;
+        font-weight: 700;
         padding-bottom: .2em;
         border-bottom: 2px solid #E6E9ED;
         width: 100%; }
@@ -98,6 +99,9 @@ a {
           line-height: 2.2;
           border: 0;
           color: white; }
+
+
+
            .contenido .form .form_control .botones button:hover,.contenido .form .form_control .botones button:focus{
             cursor: pointer;outline: none; }
           .contenido .form .form_control .botones button#rejected {
@@ -123,6 +127,7 @@ a {
       .contenido .producto .header h1 {
         color: #2A3F54;
         text-align: center;
+        font-weight: 700;
         font-size: 2.2em;
         padding-bottom: .2em;
         border-bottom: 2px solid #E6E9ED; }
@@ -340,3 +345,55 @@ display: flex;
     font-size: 1.2em;
 }
 /*# sourceMappingURL=style.css.map */
+
+
+.salir{
+  background: #F44336;
+  text-align: center;
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  text-decoration: none;
+  width: 60px;
+  height: 60px;
+  font-size: 30px;
+  border-radius: 50%;
+  line-height: 2.2;
+  border: 0;
+  color: white;
+}
+#alim{
+  background: #F44336;
+  text-align: center;
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  text-decoration: none;
+
+  display: block;
+  padding: .5em 1em;
+  font-size: 20px;
+
+
+  border: 0;
+  color: white;
+}
+
+
+.salir:hover{
+  color: white;
+}
+
+.w80{
+  width: 80%!important;
+}
+
+
+.cerra{
+  color: white;
+  position: absolute;
+  right: -30px;
+  background: transparent;
+  border: 0;
+  font-size: 2.5em;
+}

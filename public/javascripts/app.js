@@ -31,27 +31,26 @@ function getData(url){
     limpiar_auto();
     Producto = null;
     $.get(url,function (data,status) {
-        console.log(data[0]);
-        
-        Producto = data[0];
+        console.log(data)
+        if (data=="sinmasnull"){
+            alert("sin mas");
+        } else {
+                Producto = data;
+                Producto.img = new Array();
 
-        if( typeof(Producto) == 'undefined'){
-            //alert("algo");
-            var rm = Math.floor(Math.random() * (13895 - 1)) + 1;
-            var idss= String(rm).split('.')[0];
-                console.log(idss);
-            var url  = 'localhost:3000/'+idss;
-            $( "#idP" ).val(idss);
-            //alert(url);
-            getData(url);
+                Images = [];
+                Principal = [];
+                Contenido = [];
+                flag = true;
+                console.dir(data)
+                $( "#idP" ).val(Producto.id);
+                setTimeout(function(){ print(data) }, 300);
+                console.dir(Producto);
+
+
         }
-        Producto.Condicion = 1;
-        Images = [];
-        Principal = [];
-        Contenido = [];
-       flag = true;
-        setTimeout(function(){ print(data) }, 300);
-        console.dir(Producto);
+
+
     });
 
 }
@@ -59,79 +58,56 @@ function getData(url){
 
 function print(data) {
     limpiar();
+
     document.getElementById("producto").style.opacity = 1;
-    cargar("#nombre","Nombre");
+    cargar("#nombre","nombre");
     cargar("#marca","marca");
-    cargar("#des","des");
-    $('#carac_i').val(Producto.caracteristicas);
-    Producto.caracteristicas.split('.').map(dato=>addCaracteristicas(dato,'carac'));
-    cargar("#color","Color");
+    cargar("#modelo","modelo");
+    cargar("#des","descripcion");
+    cargar("#espe","especificaciones");
+    $('#carac_i').val(Producto.carac);
+    Producto.carac.split('.').map(dato=>addCaracteristicas(dato,'carac'));
+    cargar("#color","color");
     cargar("#medida","medidas");
     cargar("#peso","peso");
     cargar("#cat","cat");
     cargar("#precio","precio");
-    cargar("#precioD","Precio_con_Descuento");
-    cargar("#fechai","Fecha_Inicial_del_Descuento");
-    cargar("#fechaf","Fecha_Final_del_Descuento");
+    cargar("#precioD","precio_des");
+    cargar("#fechai","fechaini");
+    cargar("#fechaf","fechafin");
     $( "#fechai_i" ).datepicker({ dateFormat: 'yy-mm-dd' });
     $( "#fechaf_i" ).datepicker({ dateFormat: 'yy-mm-dd' });
-    cargar("#sku","SKU")
-    cargar("#codBarr","codBar")
-    cargar("#inventario","Inventario");
-    cargar("#condicion","Condicion");
-    cargar("#member","mem");
+    cargar("#sku","sku")
+    cargar("#codBar","codBar")
+    cargar("#inventario","inventario");
+    cargar("#condicion","condicion");
+    cargar("#mem","mem");
     cargar("#medidap","medidaPaq");
     cargar("#pesop","pesoPaq");
     cargar("#impuestos","impu");
-    cargar("#envio","Envío_Gratis");
+    cargar("#envio","envio");
+    cargar("#pap","pais");
+
+    Producto.gal.split(',').map((e)=>{
+        addfotos(e);
+        addfotosNone(e);
+
+    })
 
 
-    addfotos(Producto.Galeria__Principal);
-    addfotos(Producto.Galeria_contenido);
-    addfotos(Producto.Imagen1);
-    addfotos(Producto.Imagen2);
-    addfotos(Producto.Imagen3);
+
+}
 
 
-    addfotosNone(Producto.Galeria__Principal);
-    addfotosNone(Producto.Galeria_contenido);
-    addfotosNone(Producto.Imagen1);
-    addfotosNone(Producto.Imagen2);
-    addfotosNone(Producto.Imagen3);
+function _updateIMG(){
+    var ca = document.getElementById('fotos');
+    $('#exampleModalCenter').modal('hide')
+    ca.innerHTML ="";
+    Producto.img.map((e)=>{
+        addfotos(e,false);
+        addfotosNone(e,false);
 
-    if(Producto.Galeria__Principal==""){
-        $('#img_1_valor').prop('disabled', true);
-    }else{
-        $('#img_1_valor').prop('disabled', false);
-    }
-
-    if(Producto.Galeria_contenido==""){
-        $('#img_2_valor').prop('disabled', true);
-    }else{
-        $('#img_2_valor').prop('disabled', false);
-    }
-    if(Producto.Imagen1==""){
-        $('#img_3_valor').prop('disabled', true);
-    }else{
-        $('#img_3_valor').prop('disabled', false);
-    }
-    
-    if(Producto.Imagen2==""){
-        $('#img_4_valor').prop('disabled', true);
-    }else{
-        $('#img_4_valor').prop('disabled', false);
-    }
-
-    if(Producto.Imagen3==""){
-        $('#img_5_valor').prop('disabled', true);
-    }else{
-        $('#img_5_valor').prop('disabled', false);
-    }
-  
-
-
-    
-
+    })
 
 }
 
@@ -140,7 +116,6 @@ $('#fotos').hover(function(){
         updateImg();
         flag= false;
     }
-   
 })
 
 
@@ -158,15 +133,22 @@ function addCaracteristicas(dato,tipo) {
     ca.appendChild(a);
 }
 
-function addfotos(dato) {
+function addfotos(dato,f=true) {
     var ca = document.getElementById('fotos');
     var a = document.createElement('img');
     a.src = dato;
+    a.onclick = function(){
+        document.getElementById('img_modal').src=this.src;
+        $('#exampleModalCenter').modal('show')
+    };
+    if (f){
+        Producto.img.push(dato);
+    }
+
     ca.appendChild(a);
 }
 
 function limpiar() {
-   
     document.getElementById("producto").style.opacity = 0;
     document.getElementById('fotos').innerHTML = "";
     document.getElementById('carac').innerHTML = "";
@@ -177,21 +159,23 @@ function limpiar_auto(){
     document.getElementById('foto_info').innerHTML = "";
 }
 
-function addfotosNone(dato) {
+function addfotosNone(dato,f=true) {
     var ca = document.getElementById('fotos_none');
     var a = document.createElement('img');
     a.src = dato;
     //console.dir(a)
-    Images.push[a];
+    if (f) {
+        Images.push[a];
+    }
     ca.appendChild(a);
 }
 
 
 
 let sNombre = $('#nombre_i');
-sNombre.keypress(()=>{update(sNombre , "Nombre")});
-sNombre.keyup(()=>{update(sNombre , "Nombre")});
-sNombre.change(()=>{update(sNombre , "Nombre")});
+sNombre.keypress(()=>{update(sNombre , "nombre")});
+sNombre.keyup(()=>{update(sNombre , "nombre")});
+sNombre.change(()=>{update(sNombre , "nombre")});
 
 let sMarca = $('#marca_i');
 sMarca.keypress(()=>{update(sMarca ,"marca")});
@@ -199,9 +183,9 @@ sMarca.keyup(()=>{update(sMarca ,"marca")});
 sMarca.change(()=>{update(sMarca, "marca")});
 
 let sDes = $('#des_i');
-sDes.keypress(()=>{update(sDes ,"des")});
-sDes.keyup(()=>{update(sDes ,"des")});
-sDes.change(()=>{update(sDes, "des")});
+sDes.keypress(()=>{update(sDes ,"descripcion")});
+sDes.keyup(()=>{update(sDes ,"descripcion")});
+sDes.change(()=>{update(sDes, "descripcion")});
 
 let sCarac = $('#carac_i');
 sCarac.keypress(()=>{update(sCarac ,"carac")});
@@ -209,9 +193,9 @@ sCarac.keyup(()=>{update(sCarac ,"carac")});
 sCarac.change(()=>{update(sCarac, "carac")});
 
 let sColor = $('#color_i');
-sColor.keypress(()=>{update(sColor ,"Color")});
-sColor.keyup(()=>{update(sColor ,"Color")});
-sColor.change(()=>{update(sColor, "Color")});
+sColor.keypress(()=>{update(sColor ,"color")});
+sColor.keyup(()=>{update(sColor ,"color")});
+sColor.change(()=>{update(sColor, "color")});
 
 
 let sMedida = $('#medida_i');
@@ -238,42 +222,42 @@ sPrecio.keyup(()=>{update(sPrecio ,"precio")});
 sPrecio.change(()=>{update(sPrecio, "precio")});
 
 let sPrecioD = $('#precioD_i');
-sPrecioD.keypress(()=>{update(sPrecioD ,"Precio_con_Descuento")});
-sPrecioD.keyup(()=>{update(sPrecioD ,"Precio_con_Descuento")});
-sPrecioD.change(()=>{update(sPrecioD, "Precio_con_Descuento")});
+sPrecioD.keypress(()=>{update(sPrecioD ,"precio_des")});
+sPrecioD.keyup(()=>{update(sPrecioD ,"precio_des")});
+sPrecioD.change(()=>{update(sPrecioD, "precio_des")});
 
 let sFechai = $('#fechai_i');
-sFechai.keypress(()=>{update(sFechai ,"Fecha_Inicial_del_Descuento")});
-sFechai.keyup(()=>{update(sFechai ,"Fecha_Inicial_del_Descuento")});
-sFechai.change(()=>{update(sFechai, "Fecha_Inicial_del_Descuento")});
+sFechai.keypress(()=>{update(sFechai ,"fechaini")});
+sFechai.keyup(()=>{update(sFechai ,"fechaini")});
+sFechai.change(()=>{update(sFechai, "fechaini")});
 
 let sFechaf = $('#fechaf_i');
-sFechaf.keypress(()=>{update(sFechaf ,"Fecha_Final_del_Descuento")});
-sFechaf.keyup(()=>{update(sFechaf ,"Fecha_Final_del_Descuento")});
-sFechaf.change(()=>{update(sFechaf, "Fecha_Final_del_Descuento")});
+sFechaf.keypress(()=>{update(sFechaf ,"fechafin")});
+sFechaf.keyup(()=>{update(sFechaf ,"fechafin")});
+sFechaf.change(()=>{update(sFechaf, "fechafin")});
 
 let sSku = $('#sku_i');
-sSku.keypress(()=>{update(sSku ,"SKU")});
-sSku.keyup(()=>{update(sSku ,"SKU")});
-sSku.change(()=>{update(sSku, "SKU")});
+sSku.keypress(()=>{update(sSku ,"sku")});
+sSku.keyup(()=>{update(sSku ,"sku")});
+sSku.change(()=>{update(sSku, "sku")});
 
 
-let sCodBarr = $('#codBarr_i');
+let sCodBarr = $('#codBar_i');
 sCodBarr.keypress(()=>{update(sCodBarr ,"codBar")});
 sCodBarr.keyup(()=>{update(sCodBarr ,"codBar")});
 sCodBarr.change(()=>{update(sCodBarr, "codBar")});
 
 let sInventario = $('#inventario_i');
-sInventario.keypress(()=>{update(sInventario ,"Inventario")});
-sInventario.keyup(()=>{update(sInventario ,"Inventario")});
-sInventario.change(()=>{update(sInventario, "Inventario")});
+sInventario.keypress(()=>{update(sInventario ,"inventario")});
+sInventario.keyup(()=>{update(sInventario ,"inventario")});
+sInventario.change(()=>{update(sInventario, "inventario")});
 
 let sCondicion = $('#condicion_i');
-sCondicion.keypress(()=>{update(sCondicion ,"Condicion")});
-sCondicion.keyup(()=>{update(sCondicion ,"Condicion")});
-sCondicion.change(()=>{update(sCondicion, "Condicion")});
+sCondicion.keypress(()=>{update(sCondicion ,"condicion")});
+sCondicion.keyup(()=>{update(sCondicion ,"condicion")});
+sCondicion.change(()=>{update(sCondicion, "condicion")});
 
-let sMember = $('#member_i');
+let sMember = $('#mem_i');
 sMember.keypress(()=>{update(sMember ,"mem")});
 sMember.keyup(()=>{update(sMember ,"mem")});
 sMember.change(()=>{update(sMember, "mem")});
@@ -294,29 +278,18 @@ sImpuestos.keyup(()=>{update(sImpuestos ,"impu")});
 sImpuestos.change(()=>{update(sImpuestos, "impu")});
 
 let sEnvio = $('#envio_i');
-sEnvio.keypress(()=>{update(sEnvio ,"Envío_Gratis")});
-sEnvio.keyup(()=>{update(sEnvio ,"Envío_Gratis")});
-sEnvio.change(()=>{update(sEnvio, "Envío_Gratis")});
+sEnvio.keypress(()=>{update(sEnvio ,"envio")});
+sEnvio.keyup(()=>{update(sEnvio ,"envio")});
+sEnvio.change(()=>{update(sEnvio, "envio")});
+
+let Spap = $('#pap_i');
+Spap.keypress(()=>{update(Spap ,"pais")});
+Spap.keyup(()=>{update(Spap ,"pais")});
+Spap.change(()=>{update(Spap, "pais")});
 
 
 
 
-$('#medidaCorr').on('click',function(){
-    dellCm("medidas");
-});
-
-$('#medidaCorrP').on('click',function(){
-    dellCm("medidaPaq");
-});
-
-$('#condicionCorr').on('click',function(){
-    if(Producto.Condicion=="Nuevo"){
-        Producto.Condicion = 1;
-    }else{
-        Producto.Condicion = 2;
-    }
-    print(Producto);
-});
 
 
 
@@ -339,57 +312,85 @@ function dellCm(se){
 
 
 $('#rejected').on('click',function(){
-    corregirImg();
+    delete Producto['Condicion'];
+    var stringIMG = "";
+    for (var i = 0;i<Producto.img.length;i++){
+        stringIMG+=Producto.img[i];
+        if (i<(Producto.img.length)-1){
+            stringIMG+=',';
+        }
+    }
+
+
+
+
+    Producto.gal=stringIMG;
+    delete Producto['img'];
     console.dir(Producto);
     $.ajax({
         type: "POST",
-        url: "localhost:3000/malos",
+        url: "malos.php",
         data: Producto,
         success: function(e){
-            if(e.status){
-                let a = $( "#idP" ).val();
-                var rm = Math.floor(Math.random() * (13895 - 1)) + 1;
-               
-                var idss= String(rm).split('.')[0];
-                console.log(idss);
-                var url  = 'localhost:3000/'+idss;
-                $( "#idP" ).val(parseInt(idss));
-                console.log(url);
+            console.log(e);
+            if (e==1){
+
+                console.log();
+                var a = parseInt(Producto.id)+1;
+                var url  = 'dato.php?id='+a;
                 getData(url);
-                
-                $( ".form" ).scrollTop( 0 );
-                $( ".producto" ).scrollTop( 0 );
+            } else{
+                alert("incorecto")
             }
         }
-      });
+    });
 });
 
-$('#accepted').on('click',function(){
-    corregirImg();
-    console.dir(Producto);
+
+
+$('#accepted').click(function (e) {
+    delete Producto['Condicion'];
+    var stringIMG = "";
+    for (var i = 0;i<Producto.img.length;i++){
+        stringIMG+=Producto.img[i];
+        if (i<(Producto.img.length)-1){
+            stringIMG+=',';
+        }
+    }
+
+    Producto.gal=stringIMG;
+    delete Producto['img'];
     $.ajax({
         type: "POST",
-        url: "localhost:3000/buenos",
+        url: "buenos.php",
         data: Producto,
         success: function(e){
-            if(e.status){
-                let a = $( "#idP" ).val();
-                a++;
-                var rm = Math.floor(Math.random() * (13895 - 1)) + 1;
-               
-                var idss= String(rm).split('.')[0];
-                console.log(idss);
-                var url  = 'localhost:3000/'+idss;
-                $( "#idP" ).val(parseInt(idss));
-                console.log(url);
+            console.log(e);
+            if (e==1){
+                alert("corecto")
+
+                var a = parseInt(Producto.id)+1;
+                var url  = 'dato.php?id='+a;
                 getData(url);
-                
-                $( ".form" ).scrollTop( 0 );
-                $( ".producto" ).scrollTop( 0 );
+            } else{
+                alert("incorecto")
             }
         }
-      });
+    });
 });
+
+/*$('#accepted').on('click',function(){
+alert(11);
+
+    $.ajax({
+        type: "POST",
+        url: "buenos.php",
+        data: Producto,
+        success: function(e){
+            console.log(e);
+        }
+      });
+});*/
 
 /*
 function corregirImg(){
